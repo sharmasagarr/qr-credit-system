@@ -51,8 +51,8 @@ QR-Code-MERN-Project/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/digi-webdev2/qr-credit-system.git
-cd qr-credit-system
+git clone https://github.com/digilateral/QR-Code-MERN-Project.git
+cd QR-Code-MERN-Project
 ```
 ### 2. Install dependencies
 Backend:
