@@ -39,9 +39,9 @@ A full-stack MERN (MongoDB, Express, React, Node.js) web application for managin
 
 ## 📂 Folder Structure (Simplified)
 
-QR-Code-MERN-Project/
-├── client/ # React + Vite Frontend
-├── server/ # Node.js Backend
+QR-Code-MERN-Project/  
+├── client/    # React + Vite Frontend  
+├── server/    # Node.js Backend  
 └── README.md
 
 ---
@@ -80,5 +80,5 @@ npm run dev
 ```
 
 🧑‍💻 Author
-Sagar Sharma (@digi-webdev2)
+Sagar Sharma (@digi-webdev2)  
 Built during internship at digilateral.com
