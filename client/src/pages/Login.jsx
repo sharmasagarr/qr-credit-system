@@ -11,7 +11,6 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  console.log(location)
 
   useEffect(() => {
     userIdRef.current?.focus();

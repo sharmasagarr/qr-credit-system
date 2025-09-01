@@ -23,6 +23,13 @@ export async function createQRCode(req, res) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    let createdFor;
+
+    if (type === "prescription" && req.body.createdFor) {
+      createdFor = req.body.createdFor;
+    }
+
+
     const user = await getUserById(creator.userObjId);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -33,9 +40,15 @@ export async function createQRCode(req, res) {
     }
 
     const qrId = nanoid(6);
-    const initialUrl = `https://digilateral.com/business-card/templates/${qrId}`;
-    const redirectUrl = `https://dev.livequiz.digilateral.com/qr/scan/${qrId}`;
-    const imageUrl = `https://dev.livequiz.digilateral.com/qr-codes/${qrId}.svg`;
+    const imageUrl = `http://192.168.1.5:7100/qr-codes/${qrId}.svg`;
+    const redirectUrl = `http://192.168.1.5:7100/qr/scan/${qrId}`;
+    let initialUrl;
+
+    if (type==="business_card"){
+      initialUrl = `http://192.168.1.5:5173/templates/${qrId}`;  
+    } else if (type==="prescription"){
+      initialUrl = `http://192.168.1.5:5173/scan/${qrId}`;
+    }
 
     // 1. Create QR record
     const newQR = new QR({
@@ -44,7 +57,8 @@ export async function createQRCode(req, res) {
       initialUrl,
       qrExpiry: user.creditExpiry,
       type,
-      imageUrl
+      imageUrl,
+      ...(createdFor && { createdFor }) // <-- only add if exists
     });
 
     await newQR.save();
@@ -87,7 +101,7 @@ export async function createQRCode(req, res) {
       data: redirectUrl,
       image: "",
       dotsOptions: {
-        color: "#2c3ceeff",
+        color: "#046a81ff",
         type: "rounded",
       },
       backgroundOptions: {
@@ -115,7 +129,7 @@ export async function createQRCode(req, res) {
     res.status(200).json({
       success: true,
       qrId,
-      imageUrl: `https://dev.livequiz.digilateral.com/qr-codes/${fileName}`,
+      imageUrl,
       status: "notAssigned",
       createdAt: new Date().toISOString().split("T")[0] + "T00:00:00.000Z",
       qrExpiry: new Date(user.creditExpiry).toISOString().split("T")[0] + "T00:00:00.000Z"
@@ -207,21 +221,22 @@ export async function allQRsList(req, res) {
   }
 }
 
-
-
 // assign doctor
-export async function assignDoctorDetails(req, res) {
+export async function assignQRDetails(req, res) {
   try {
     const { qrId } = req.params;
-    const doctorDetails = req.body;
+    const details = req.body;
 
     const qr = await QR.findOne({ qrId });
     if (!qr) return res.status(404).json({ error: "QR not found" });
 
-    qr.doctorDetails = doctorDetails;
+    qr.assignedDetails = details;
     qr.status = "assigned";
-    qr.finalUrl = `https://digilateral.com/business-card/card/${qrId}/${doctorDetails.templateId}`
-
+    if (qr.type === "business_card"){
+      qr.finalUrl = `http://192.168.1.5:5173/card/${qrId}/${qr.assignedDetails.templateId}`
+    } else if(qr.type === "prescription"){
+      qr.finalUrl = `http://192.168.1.5:5173/result/${qrId}`
+    }
     await qr.save();
     res.status(200).json({ message: "QR assigned", qr });
   } catch (err) {
@@ -247,42 +262,6 @@ export async function getQRDetails(req, res) {
     return res.status(500).json({ error: "Internal server error" });
   }
 }
-/*
-// generate v-card
-export async function generateVCard(req, res) {
-  const { qrId } = req.params;
-
-  if (!qrId) {
-    return res.status(400).send("qrId is required");
-  }
-
-  try {
-    const qr = await QR.findOne({ qrId });
-
-    if (!qr) {
-      return res.status(404).json({ error: "QR not found" });
-    }
-
-    const vCard = `
-      BEGIN:VCARD
-      VERSION:3.0
-      FN:${qr.doctorDetails.name}
-      TEL;TYPE=CELL:${qr.doctorDetails.phone}
-      EMAIL:${qr.doctorDetails.email}
-      END:VCARD
-    `.trim();
-
-    res.setHeader("Content-Disposition", "attachment; filename=doctor-contact.vcf");
-    res.setHeader("Content-Type", "text/vcard; charset=utf-8");
-    res.status(200).send(vCard);
-
-  } catch (err) {
-    console.error("Error generating vCard:", err);
-    res.status(500).send("Internal Server Error");
-  }
-};
-*/
-
 
 export async function generateVCard(req, res) {
   const { qrId } = req.params;
@@ -316,22 +295,16 @@ export async function generateVCard(req, res) {
       "END:VCARD"
     ].join("\r\n");
 
-const safeName = qr.doctorDetails.name
-  .trim()
-  .replace(/\s+/g, '-')           // Replace spaces with dashes
-  .replace(/[^a-zA-Z0-9\-]/g, ''); // Remove special characters
+    const safeName = qr.doctorDetails.name
+      .trim()
+      .replace(/\s+/g, '-')           // Replace spaces with dashes
+      .replace(/[^a-zA-Z0-9\-]/g, ''); // Remove special characters
 
-res.setHeader("Content-Disposition", `attachment; filename=${safeName}.vcf`);
-
-
-
-//    res.setHeader("Content-Disposition", `attachment; filename=doctor-contact-${qrId}.vcf`);
+    res.setHeader("Content-Disposition", `attachment; filename=${safeName}.vcf`);
     res.setHeader("Content-Type", "text/x-vcard; charset=utf-8");
     res.status(200).send(vCard);
-
   } catch (err) {
     console.error("Error generating vCard:", err);
     res.status(500).send("Internal Server Error");
   }
 }
-

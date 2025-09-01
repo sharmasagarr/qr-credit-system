@@ -30,7 +30,11 @@ const adminSchema = new mongoose.Schema({
     role: { 
         type: String, 
         default: 'admin' 
-    }
+    },
+    services: [{
+        type: String,
+        enum: ['business_card', 'prescription'],
+    }]
 });
 
 const Admin = mongoose.model('Admin', adminSchema);

@@ -14,10 +14,20 @@ const getUserById = async (_id) => {
   ];
 
   for (const { model, role } of modelMap) {
-    const user = await model.findOne({ _id });
+    const user = await model.findOne({ _id }); // KEEP as Mongoose document
+
     if (user) {
-      user.role = role;
-      return user;
+      user.role = role; // ✅ allowed, even on document
+
+      if (role !== "admin" && user.admin) {
+        const admin = await Admin.findById(user.admin);
+        if (admin) {
+          user.creditExpiry = admin.creditExpiry;
+          user.services = admin.services;
+        }
+      }
+
+      return user; // Still a full document with save() etc.
     }
   }
 

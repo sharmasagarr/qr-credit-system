@@ -4,6 +4,7 @@ const flmSchema = new mongoose.Schema({
     name: {type: String, required: true},
     id: {type: String, required: true, unique: true},
     password: {type: String, required: true},
+    admin: {type: mongoose.Schema.Types.ObjectId, ref:'Admin', required: true},
     slm: {type: mongoose.Schema.Types.ObjectId, ref:'SLM', required: true},
     MR: [{ type: mongoose.Schema.Types.ObjectId, ref: 'MR' }],
     role:{type: String, default:'flm'},
@@ -13,11 +14,7 @@ const flmSchema = new mongoose.Schema({
     credits: { 
         type: Number, 
         default: 0 
-    },
-    creditExpiry: { 
-        type: Date, 
-        required: false
-    },
+    }
 });
 
 const FLM = mongoose.model('FLM', flmSchema);

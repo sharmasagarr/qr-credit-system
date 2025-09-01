@@ -1,20 +1,25 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import './config/axios';
 import Login from "./pages/Login";
 import Templates from "./pages/Templates";
 import { AuthProvider } from "./contexts/AuthContext";
 import PrivateRoute from "./routes/PrivateRoute";
 import AdminDashboard from "./pages/AdminDashBoard";
 import AdminManageCredits from "./pages/AdminManageCredits";
-import AdminManageQRs from "./pages/AdminManageQRs";
+import AdminManageQRsBusinessCard from "./pages/AdminManageQRsBusinessCard";
+import AdminManageQRsPrescription from "./pages/AdminManageQRsPrescription";
 import AdminTransaction from "./pages/AdminTransaction";
 import AdminReport from "./pages/AdminReport";
 import DashBoard from "./pages/Dashboard";
 import ManageCredits from "./pages/ManageCredits";
-import ManageQRs from "./pages/ManageQR";
+import ManageQRsBusinessCard from "./pages/ManageQRsBusinessCard";
+import ManageQRsPrescription from "./pages/ManageQRsPrescription";
 import Transaction from "./pages/Transaction";
 import Report from "./pages/Report";
 import QRForms from "./pages/QRForms";
 import BusinessCard from "./pages/BusinessCard";
+import DocumentScanner from "./pages/DocumentScanner";
+import Result from "./pages/Result";
 
 function App() {
   return (
@@ -28,7 +33,19 @@ function App() {
           element={<BusinessCard />}
         />
 
+        <Route
+          path="/scan/:qrId"
+          element={<DocumentScanner />}
+        />
+
+        <Route
+          path="/result/:qrId"
+          element={<Result />}
+        />
+
         {/* Protected User Routes */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
         <Route
           path="/dashboard"
           element={<PrivateRoute><DashBoard /></PrivateRoute>}
@@ -38,8 +55,12 @@ function App() {
           element={<PrivateRoute><ManageCredits /></PrivateRoute>}
         />
         <Route
-          path="/manageQRs"
-          element={<PrivateRoute><ManageQRs /></PrivateRoute>}
+          path="/manageQRs/business_card"
+          element={<PrivateRoute><ManageQRsBusinessCard /></PrivateRoute>}
+        />
+        <Route
+          path="/manageQRs/prescription"
+          element={<PrivateRoute><ManageQRsPrescription /></PrivateRoute>}
         />
         <Route
           path="/transactions"
@@ -72,8 +93,12 @@ function App() {
           element={<PrivateRoute allowedRoles={['admin']}><AdminManageCredits /></PrivateRoute>}
         />
         <Route
-          path="/admin/manageQRs"
-          element={<PrivateRoute allowedRoles={['admin']}><AdminManageQRs /></PrivateRoute>}
+          path="/admin/manageQRs/business_card"
+          element={<PrivateRoute allowedRoles={['admin']}><AdminManageQRsBusinessCard /></PrivateRoute>}
+        />
+        <Route
+          path="/admin/manageQRs/prescription"
+          element={<PrivateRoute allowedRoles={['admin']}><AdminManageQRsPrescription /></PrivateRoute>}
         />
         <Route
           path="/admin/transactions"
@@ -83,9 +108,6 @@ function App() {
           path="/admin/report"
           element={<PrivateRoute allowedRoles={['admin']}><AdminReport /></PrivateRoute>}
         />
-
-        {/* Redirect root to dashboard */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
         {/* Unauthorized route */}
         <Route

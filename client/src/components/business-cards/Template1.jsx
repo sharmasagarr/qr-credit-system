@@ -42,7 +42,7 @@ const Template1 = () => {
     return (
       <div className="text-center mt-10 text-lg text-red-500">{error}</div>
     );
-  if (!qrData || !qrData.doctorDetails)
+  if (!qrData || !qrData.assignedDetails)
     return <div className="text-center mt-10 text-lg">No data available</div>;
 
   const {
@@ -63,7 +63,7 @@ const Template1 = () => {
     linkedIn,
     phone,
     email,
-  } = qrData.doctorDetails;
+  } = qrData.assignedDetails;
 
   return (
     <div className="font-['Poppins'] bg-[#e2e0df] min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden">
@@ -98,12 +98,13 @@ const Template1 = () => {
               <div className="absolute top-38 w-full flex items-center justify-center">
                 <div className="text-white text-lg font-bold font-sans flex flex-col justify-center items-center">
                   <p>{name}</p>
-                  <p className='text-amber-500 text-[11px] font-medium'>{role}</p>
-                  <p className='text-[10px] font-medium'>{hospital1.name}</p>
+                  <p className="text-amber-500 text-[11px] font-medium">
+                    {role}
+                  </p>
+                  <p className="text-[10px] font-medium">{hospital1.name}</p>
                 </div>
               </div>
             )}
- 
 
             {/* QR Image */}
             <div className="absolute top-90 left-22 w-[120px] h-[120px] rounded-xl overflow-hidden border-2 border-gray-500 p-2 bg-white">
@@ -266,7 +267,8 @@ const Template1 = () => {
       {/* Save Contact & Copy URL Buttons */}
       {qrData.qrId && (
         <div className="mt-6 flex gap-4 sm:items-center">
-          {(user?.objId === qrData?.creator.userObjId || user?.role === "admin") ? (
+          {user?.objId === qrData?.creator.userObjId ||
+          user?.role === "admin" ? (
             <button
               className="cursor-pointer font-sans flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-medium px-6 py-2 rounded-full text-sm transition-all hover:shadow-md"
               onClick={() => navigate(`/form/${qrId}/${templateId}`)}

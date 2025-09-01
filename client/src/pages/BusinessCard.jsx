@@ -4,11 +4,9 @@ import Template3 from '../components/business-cards/Template3';
 import Template4 from '../components/business-cards/Template4';
 import Template5 from '../components/business-cards/Template5';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 
 export default function BusinessCard() {
   const { templateId } = useParams();
-  const { user } = useAuth();
 
   const templates = {
     1: Template1,

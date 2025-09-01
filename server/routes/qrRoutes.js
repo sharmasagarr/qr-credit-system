@@ -4,7 +4,7 @@ import {
   handleQRScan,
   allQRsListByUser,
   allQRsList,
-  assignDoctorDetails,
+  assignQRDetails,
   getQRDetails,
   generateVCard,
   
@@ -16,7 +16,7 @@ router.post('/create', createQRCode);
 router.get('/scan/:qrId', handleQRScan);
 router.get('/list', allQRsListByUser);
 router.get('/allList', allQRsList);
-router.patch("/assign/:qrId", assignDoctorDetails);
+router.patch("/assign/:qrId", assignQRDetails);
 router.get("/details/:qrId", getQRDetails);
 router.get("/generateVCard/:qrId", generateVCard);
 

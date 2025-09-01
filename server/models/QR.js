@@ -9,7 +9,7 @@ const qrSchema = new Schema({
   },
   type: {
     type: String,
-    enum: ['business_card'],
+    enum: ['business_card', 'prescription'],
     required: true,
   },
   imageUrl: {
@@ -25,6 +25,15 @@ const qrSchema = new Schema({
       type: String,
       enum: ['admin', 'tlm', 'slm', 'flm', 'mr'],
       required: true,
+    },
+  },
+  createdFor:{
+     userObjId: {
+      type: Types.ObjectId,
+    },
+    role: {
+      type: String,
+      enum: ['doctor'],
     },
   },
   initialUrl: {
@@ -44,7 +53,7 @@ const qrSchema = new Schema({
     type: Date,
     required: true,
   },
-  doctorDetails: {
+  assignedDetails: {
     type: Schema.Types.Mixed,
     default: {},
   },

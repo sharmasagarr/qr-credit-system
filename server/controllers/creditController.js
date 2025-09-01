@@ -174,7 +174,6 @@ export async function getCreditsInfo(req, res) {
 
     const userObjectId = new mongoose.Types.ObjectId(userObjId);
     const user = await getUserById(userObjectId);
-
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }

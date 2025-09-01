@@ -18,25 +18,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const port = 7100;
 
-const allowedOrigins = [
-  'https://digilateral.com/business-card',
-  'https://digilateral.com',
-	'*'
-];
-/*
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}));
-*/
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

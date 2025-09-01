@@ -43,18 +43,25 @@ export async function login(req, res) {
 
     let userFound = null;
     let userRole = null;
+    let services = null;
 
     for (const { model, role } of modelMap) {
       const user = await model.findOne({ id });
       if (user) {
         userFound = user;
         userRole = role;
+        services = user.services;
         break;
       }
     }
 
     if (!userFound || userFound.password !== password) {
       return res.status(401).json({ success: false, message: "invalid credentials" });
+    }
+
+    if (userFound.role !== "admin"){
+      const admin = await Admin.findById(userFound.admin);
+      services = admin.services;
     }
 
     const loginTime = new Date();
@@ -80,6 +87,7 @@ export async function login(req, res) {
         region: userFound.region || null,
         hq: userFound.hq || null,
         zone: userFound.zone || null,
+        services: services || null
       },
     });
 
@@ -90,18 +98,42 @@ export async function login(req, res) {
 }
 
 // get user details
-export async function getUserDetails(req, res){
-  try{
+export async function getUserDetails(req, res) {
+  try {
     const { userObjId } = req.query;
     const user = await getUserById(userObjId);
-    if (!user){
+
+    if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    const userObj = user.toObject();
-    delete userObj.password;
-    return res.json({ user: userObj });
+
+    // Manually enrich with creditExpiry and services
+    let creditExpiry = null;
+    let services = null;
+
+    if (user.role === "admin") {
+      creditExpiry = user.creditExpiry;
+      services = user.services;
+    } else if (user.admin) {
+      const admin = await Admin.findById(user.admin);
+      if (admin) {
+        creditExpiry = admin.creditExpiry;
+        services = admin.services;
+      }
+    }
+
+    const userData = {
+      ...user.toObject(),
+      creditExpiry,
+      services,
+    };
+
+    delete userData.password;
+
+    return res.json({ user: userData });
   } catch (error) {
-    return res.status(404).json({ error: 'Something went wrong' });
+    console.error("getUserDetails error:", error);
+    return res.status(500).json({ error: 'Something went wrong' });
   }
 }
 
@@ -396,6 +428,7 @@ export async function uploadExcel(req, res){
         zone: SLMZONE,
         region: SLMREGION,
         tlm: tlmObjectId,
+        admin: adminId,
         FLM: [],
       }, slmMap);
 
@@ -411,6 +444,7 @@ export async function uploadExcel(req, res){
           hq: FLMHQ,
           zone: FLMZONE,
           region: FLMREGION,
+          admin: adminId,
           slm: slmObjectId,
           MR: [],
         }, flmMap);
@@ -435,6 +469,7 @@ export async function uploadExcel(req, res){
             zone: MRZONE,
             region: MRREGION,
             flm: flmObjectId,
+            admin: adminId,
           }, mrMap);
 
           await FLM.findByIdAndUpdate(flmObjectId, { $addToSet: { MR: mrObjectId } });

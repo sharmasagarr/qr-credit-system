@@ -12,11 +12,7 @@ const tlmSchema = new mongoose.Schema({
     credits: { 
         type: Number, 
         default: 0 
-    },
-    creditExpiry: { 
-        type: Date, 
-        required: false
-    },
+    }
 });
 
 const TLM = mongoose.model('TLM', tlmSchema)

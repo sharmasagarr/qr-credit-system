@@ -1,9 +1,5 @@
 import mongoose from "mongoose";
 import Admin from "../models/Admin.js";
-import TLM from "../models/TLM.js";
-import SLM from "../models/SLM.js";
-import FLM from "../models/FLM.js";
-import MR from "../models/MR.js";
 import getUserById from "../utils/getUserById.js";
 import CreditTransaction from "../models/CreditTransaction.js";
 
@@ -167,7 +163,7 @@ export async function getReport(req, res) {
 }
 
 // extend expiry
-export async function extendExpiryForHierarchy(req, res) {
+export async function extendCreditExpiryForAdmin(req, res) {
   try {
     const { adminObjectId, newExpiry } = req.body;
 
@@ -180,66 +176,18 @@ export async function extendExpiryForHierarchy(req, res) {
       return res.status(400).json({ error: "Invalid date format for newExpiry." });
     }
 
-    const admin = await Admin.findById(adminObjectId).populate("TLM");
+    const admin = await Admin.findById(adminObjectId);
     if (!admin) {
       return res.status(404).json({ error: "Admin not found." });
     }
 
-    let usersToUpdate = [];
-
-    // ✅ Include admin if they have credits
-    if (admin.credits > 0) {
-      usersToUpdate.push({ _id: admin._id, model: Admin });
-    }
-
-    // Step 1: Collect all TLMs under Admin
-    const tlms = await TLM.find({ _id: { $in: admin.TLM } }).populate("SLM");
-
-    for (const tlm of tlms) {
-      if (tlm.credits > 0) usersToUpdate.push({ _id: tlm._id, model: TLM });
-
-      // Step 2: Collect all SLMs under each TLM
-      const slms = await SLM.find({ _id: { $in: tlm.SLM } }).populate("FLM");
-
-      for (const slm of slms) {
-        if (slm.credits > 0) usersToUpdate.push({ _id: slm._id, model: SLM });
-
-        // Step 3: Collect all FLMs under each SLM
-        const flms = await FLM.find({ _id: { $in: slm.FLM } }).populate("MR");
-
-        for (const flm of flms) {
-          if (flm.credits > 0) usersToUpdate.push({ _id: flm._id, model: FLM });
-
-          // Step 4: Collect all MRs under each FLM
-          const mrs = await MR.find({ _id: { $in: flm.MR } });
-          mrs.forEach(mr => {
-            if (mr.credits > 0) usersToUpdate.push({ _id: mr._id, model: MR });
-          });
-        }
-      }
-    }
-
-    // ✅ Group updates by model
-    const grouped = {};
-    for (const { _id, model } of usersToUpdate) {
-      const modelName = model.modelName;
-      if (!grouped[modelName]) grouped[modelName] = { model, ids: [] };
-      grouped[modelName].ids.push(_id);
-    }
-
-    let totalUpdated = 0;
-
-    for (const group of Object.values(grouped)) {
-      const result = await group.model.updateMany(
-        { _id: { $in: group.ids } },
-        { $set: { creditExpiry: expiryDate } }
-      );
-      totalUpdated += result.modifiedCount;
-    }
+    // Update admin's expiry
+    admin.creditExpiry = expiryDate;
+    await admin.save();
 
     res.status(200).json({
       success: true,
-      message: `Credit expiry updated to ${expiryDate.toISOString()} for ${totalUpdated} users.`,
+      message: `Credit expiry updated to ${expiryDate.toISOString()} for admin ${admin.id}.`,
     });
 
   } catch (err) {

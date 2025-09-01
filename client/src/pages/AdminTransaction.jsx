@@ -53,7 +53,17 @@ export default function AdminTransaction() {
     }
 
     if (type) {
-      filtered = filtered.filter((tx) => tx.type === type);
+      if (type === "issue") {
+        filtered = filtered.filter((tx) =>
+          (tx.type === "issue") || (tx.type === "allocation" && tx.targetUser.userObjId === user.objId )
+        );
+      } else if (type === "allocation") {
+        filtered = filtered.filter((tx) =>
+          (tx.type === "allocation" && tx.performer.userObjId === user.objId )
+        );
+      } else {
+        filtered = filtered.filter((tx) => tx.type === type);
+      }
     }
 
     if (userId) {
