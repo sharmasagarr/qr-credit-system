@@ -31,6 +31,9 @@ app.use('/flm', flmRoutes);
 app.use('/mr', mrRoutes);
 app.use('/credits', creditRoutes);
 app.use('/qr', qrRoutes);
+app.get('/', (req, res) => {
+    res.send('QR Credit System Server is running');
+});
 
 const startServer = async () => {
     try {
