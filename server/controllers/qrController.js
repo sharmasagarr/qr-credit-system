@@ -41,8 +41,8 @@ export async function createQRCode(req, res) {
     }
 
     const qrId = nanoid(6);
-    const imageUrl = `https://qr-credit-system-server.vercel.app/tmp/qr-codes/${qrId}.svg`;
-    const redirectUrl = `https://qr-credit-system-server.vercel.app/tmp/qr/scan/${qrId}`;
+    const imageUrl = `https://qr-credit-system-server.vercel.app/qr-codes/${qrId}.svg`;
+    const redirectUrl = `https://qr-credit-system-server.vercel.app/qr/scan/${qrId}`;
     let initialUrl;
 
     if (type==="business_card"){
@@ -128,7 +128,7 @@ export async function createQRCode(req, res) {
     const baseDir =
       process.env.NODE_ENV === "production"
         ? path.join(os.tmpdir(), "qr-codes") 
-        : path.join(__dirname, "../tmp/qr-codes");
+        : path.join(__dirname, "../qr-codes");
 
     // Ensure directory exists
     if (!fs.existsSync(baseDir)) {
