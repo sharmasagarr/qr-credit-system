@@ -10,31 +10,31 @@ const templates = [
   {
     id: 1,
     name: "Classic Blue",
-    image: "/business-card/Template1.png",
+    image: "/Template1.png",
     status: "active"
   },
   {
     id: 2,
     name: "Minimal White",
-    image: "/business-card/Template2.png",
+    image: "/Template2.png",
     status: "notActive"
   },
   {
     id: 3,
     name: "Elegant Black",
-    image: "/business-card/Template3.png",
+    image: "/Template3.png",
     status: "notActive"
   },
   {
     id: 4,
     name: "Modern Gradient",
-    image: "/business-card/Template4.png",
+    image: "/Template4.png",
     status: "notActive"
   },
   {
     id: 5,
     name: "Rouded Glossy",
-    image: "/business-card/Template5.png",
+    image: "/Template5.png",
     status: "notActive"
   },
 ];
