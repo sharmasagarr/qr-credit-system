@@ -89,10 +89,6 @@ export default function Login() {
             Login
           </button>
         </form>
-
-        <p className="text-xs text-center text-gray-400 mt-6">
-          © 2025 DigiLateral Solutions — All rights reserved
-        </p>
       </div>
     </div>
   );

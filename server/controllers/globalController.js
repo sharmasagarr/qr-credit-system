@@ -10,8 +10,8 @@ import CreditTransaction from "../models/CreditTransaction.js";
 import dotenv from 'dotenv';
 import getUserById from "../utils/getUserById.js";
 import mongoose from "mongoose";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -389,7 +389,7 @@ export async function uploadExcel(req, res){
   const { adminId } = req.query;
   const workbook = XLSX.readFile(excelPath);
   const rawSheet = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval: null, raw: true, header: 1 });
-  const headers = rawSheet[0].map(h => h?.trim().replace(/\s+/g, ''));
+  const headers = rawSheet[0].map(h => h?.trim().replaceAll(/\s+/g, ''));
   const sheet = rawSheet.slice(1).map(row => Object.fromEntries(row.map((val, i) => [headers[i], val])));
 
 
@@ -400,7 +400,7 @@ export async function uploadExcel(req, res){
       TLMID, TLMNAME, TLMPASSWORD,TLMHQ,TLMZONE,
       SLMID, SLMNAME, SLMPASSWORD,SLMHQ,SLMZONE,SLMREGION,
       FLMID, FLMNAME, FLMPASSWORD,FLMHQ,FLMREGION,FLMZONE,
-      MRID, MRNAME, MREMAIL, MRPASSWORD, MRHQ, MRREGION, MRZONE, MRBUSINESSUNIT
+      MRID, MRNAME, MREMAIL, MRPASSWORD, MRHQ, MRREGION, MRZONE
     } = row;
 
     // Insert TLM
@@ -453,10 +453,6 @@ export async function uploadExcel(req, res){
 
         // Insert MR
         if (MRID && MRNAME) {
-          if (!MRBUSINESSUNIT) {
-            console.warn(`Missing business unit for MRID ${MRID}`);
-            break;
-          }
 
           const mrObjectId = await getOrCreate(MR, MRID, {
             id: MRID,
@@ -464,7 +460,6 @@ export async function uploadExcel(req, res){
             password: MRPASSWORD,
             role: 'mr',
             email: MREMAIL,
-            businessUnit: MRBUSINESSUNIT,
             hq: MRHQ,
             zone: MRZONE,
             region: MRREGION,

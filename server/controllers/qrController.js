@@ -40,14 +40,14 @@ export async function createQRCode(req, res) {
     }
 
     const qrId = nanoid(6);
-    const imageUrl = `http://192.168.1.5:7100/qr-codes/${qrId}.svg`;
-    const redirectUrl = `http://192.168.1.5:7100/qr/scan/${qrId}`;
+    const imageUrl = `http://localhost:7100/qr-codes/${qrId}.svg`;
+    const redirectUrl = `http://localhost:7100/qr/scan/${qrId}`;
     let initialUrl;
 
     if (type==="business_card"){
-      initialUrl = `http://192.168.1.5:5173/templates/${qrId}`;  
+      initialUrl = `http://localhost:5173/templates/${qrId}`;  
     } else if (type==="prescription"){
-      initialUrl = `http://192.168.1.5:5173/scan/${qrId}`;
+      initialUrl = `http://localhost:5173/scan/${qrId}`;
     }
 
     // 1. Create QR record

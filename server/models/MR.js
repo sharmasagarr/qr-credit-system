@@ -11,7 +11,6 @@ const mrSchema = new mongoose.Schema({
     zone: {type: String, required: true},
     region: {type: String, required: true},
     email: {type: String, required: true},
-    businessUnit: {type: String, required: true},
     credits: { 
         type: Number, 
         default: 0 

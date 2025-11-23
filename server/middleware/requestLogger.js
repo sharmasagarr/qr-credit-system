@@ -7,4 +7,3 @@ export function logRequests(req, res, next) {
 
   next();
 }
-
