@@ -9,6 +9,7 @@ import nodeCanvas from "canvas";
 import { JSDOM } from "jsdom";
 import fs from "node:fs";
 import path from "node:path";
+import os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -120,10 +121,25 @@ export async function createQRCode(req, res) {
 
     const buffer = await qrCode.getRawData("svg");
 
-    // 5. Save SVG to /qr-codes folder
+    // 5. Save SVG to qr-codes folder
     const fileName = `${qrId}.svg`;
-    const filePath = path.join(__dirname, "../tmp/qr-codes", fileName);
+
+    // Decide base dir based on environment
+    const baseDir =
+      process.env.NODE_ENV === "production"
+        ? path.join(os.tmpdir(), "qr-codes") 
+        : path.join(__dirname, "../tmp/qr-codes");
+
+    // Ensure directory exists
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir, { recursive: true });
+    }
+
+    const filePath = path.join(baseDir, fileName);
+
+    // Write the file
     fs.writeFileSync(filePath, buffer);
+
 
     // 6. Respond with QR URL
     res.status(200).json({

@@ -1,4 +1,4 @@
-# QR-Code-MERN-Project 🧾⚡
+# QR-Credit-System 🧾⚡
 
 A full-stack MERN (MongoDB, Express, React, Node.js) web application for managing QR codes and credits in a hierarchical organization — ideal for sales or medical reps generating QR-based business cards.
 
