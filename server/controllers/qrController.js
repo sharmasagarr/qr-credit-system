@@ -40,8 +40,8 @@ export async function createQRCode(req, res) {
     }
 
     const qrId = nanoid(6);
-    const imageUrl = `https://qr-credit-system-server.vercel.app/qr-codes/${qrId}.svg`;
-    const redirectUrl = `https://qr-credit-system-server.vercel.app/qr/scan/${qrId}`;
+    const imageUrl = `https://qr-credit-system-server.vercel.app/tmp/qr-codes/${qrId}.svg`;
+    const redirectUrl = `https://qr-credit-system-server.vercel.app/tmp/qr/scan/${qrId}`;
     let initialUrl;
 
     if (type==="business_card"){
@@ -122,7 +122,7 @@ export async function createQRCode(req, res) {
 
     // 5. Save SVG to /qr-codes folder
     const fileName = `${qrId}.svg`;
-    const filePath = path.join(__dirname, "../qr-codes", fileName);
+    const filePath = path.join(__dirname, "../tmp/qr-codes", fileName);
     fs.writeFileSync(filePath, buffer);
 
     // 6. Respond with QR URL
@@ -233,9 +233,9 @@ export async function assignQRDetails(req, res) {
     qr.assignedDetails = details;
     qr.status = "assigned";
     if (qr.type === "business_card"){
-      qr.finalUrl = `http://192.168.1.5:5173/card/${qrId}/${qr.assignedDetails.templateId}`
+      qr.finalUrl = `https://qr-credit-system-client.vercel.app/card/${qrId}/${qr.assignedDetails.templateId}`
     } else if(qr.type === "prescription"){
-      qr.finalUrl = `http://192.168.1.5:5173/result/${qrId}`
+      qr.finalUrl = `https://qr-credit-system-client.vercel.app/result/${qrId}`
     }
     await qr.save();
     res.status(200).json({ message: "QR assigned", qr });
