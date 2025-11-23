@@ -80,5 +80,4 @@ npm run dev
 ```
 
 🧑‍💻 Author
-Sagar Sharma (@digi-webdev2, Original[@sharmasagarr])  
-Built during internship at digilateral.com
+Sagar Sharma (@sharmasagarr)

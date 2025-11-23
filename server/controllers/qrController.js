@@ -9,7 +9,6 @@ import nodeCanvas from "canvas";
 import { JSDOM } from "jsdom";
 import fs from "node:fs";
 import path from "node:path";
-import os from "node:os";
 import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,8 +40,8 @@ export async function createQRCode(req, res) {
     }
 
     const qrId = nanoid(6);
-    const imageUrl = `https://qr-credit-system-server.vercel.app/qr-codes/${qrId}.svg`;
-    const redirectUrl = `https://qr-credit-system-server.vercel.app/qr/scan/${qrId}`;
+    const imageUrl = `https://bpsk2q88-7100.inc1.devtunnels.ms/qr-codes/${qrId}.svg`;
+    const redirectUrl = `https://bpsk2q88-7100.inc1.devtunnels.ms/qr/scan/${qrId}`;
     let initialUrl;
 
     if (type==="business_card"){
@@ -121,25 +120,10 @@ export async function createQRCode(req, res) {
 
     const buffer = await qrCode.getRawData("svg");
 
-    // 5. Save SVG to qr-codes folder
+    // 5. Save SVG to /qr-codes folder
     const fileName = `${qrId}.svg`;
-
-    // Decide base dir based on environment
-    const baseDir =
-      process.env.NODE_ENV === "production"
-        ? path.join(os.tmpdir(), "qr-codes") 
-        : path.join(__dirname, "../qr-codes");
-
-    // Ensure directory exists
-    if (!fs.existsSync(baseDir)) {
-      fs.mkdirSync(baseDir, { recursive: true });
-    }
-
-    const filePath = path.join(baseDir, fileName);
-
-    // Write the file
+    const filePath = path.join(__dirname, "../qr-codes", fileName);
     fs.writeFileSync(filePath, buffer);
-
 
     // 6. Respond with QR URL
     res.status(200).json({
