@@ -7,7 +7,7 @@ import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter basename="/business-card">
+    <BrowserRouter>
       <App />
       <Toaster position='top-center' />
     </BrowserRouter>
