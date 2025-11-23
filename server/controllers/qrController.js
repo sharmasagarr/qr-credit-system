@@ -40,14 +40,14 @@ export async function createQRCode(req, res) {
     }
 
     const qrId = nanoid(6);
-    const imageUrl = `http://localhost:7100/qr-codes/${qrId}.svg`;
-    const redirectUrl = `http://localhost:7100/qr/scan/${qrId}`;
+    const imageUrl = `https://qr-credit-system-server.vercel.app/qr-codes/${qrId}.svg`;
+    const redirectUrl = `https://qr-credit-system-server.vercel.app/qr/scan/${qrId}`;
     let initialUrl;
 
     if (type==="business_card"){
-      initialUrl = `http://localhost:5173/templates/${qrId}`;  
+      initialUrl = `https://qr-credit-system-client.vercel.app/templates/${qrId}`;  
     } else if (type==="prescription"){
-      initialUrl = `http://localhost:5173/scan/${qrId}`;
+      initialUrl = `https://qr-credit-system-client.vercel.app/scan/${qrId}`;
     }
 
     // 1. Create QR record
