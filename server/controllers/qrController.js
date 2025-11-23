@@ -7,9 +7,9 @@ import getAllSubordinatesRecursive from "../utils/getAllSubordinatesRecursive.js
 import { QRCodeStyling } from "qr-code-styling/lib/qr-code-styling.common.js";
 import nodeCanvas from "canvas";
 import { JSDOM } from "jsdom";
-import fs from "fs";
-import path from "path";
-import { fileURLToPath } from "url";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
